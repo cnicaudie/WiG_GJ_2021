@@ -6,6 +6,8 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private LayerMask m_groundLayer;
 
+    private Vector3 k_crouchScale = new Vector3(1f, 0.75f, 1f);
+
     private Vector3 m_velocity;
 
     private float m_speed = 20f;
@@ -27,6 +29,17 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         GetInputs();
+
+        // TODO : define a crouch button ?
+        // TODO : See if we keep the feature
+        if (Input.GetKey(KeyCode.C))
+        {
+            transform.localScale = k_crouchScale;
+        }
+        else
+        {
+            transform.localScale = Vector3.one;
+        }
     }
 
     private void FixedUpdate()
