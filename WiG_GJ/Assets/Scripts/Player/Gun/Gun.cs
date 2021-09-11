@@ -14,6 +14,8 @@ public class Gun : MonoBehaviour
     private const int k_maxAmmunitions = 5;
     private int m_ammunitions = k_maxAmmunitions;
 
+    // =================================
+
     void Update()
     {
         // TODO : Remove later
