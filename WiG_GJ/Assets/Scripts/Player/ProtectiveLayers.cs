@@ -5,11 +5,11 @@ public class ProtectiveLayers : MonoBehaviour
 {
     public const float layerMaxValue = 100f;
 
+    public const int numberOfLayers = 5;
+
     [SerializeField] private List<float> m_protectiveLayers;
 
     [SerializeField] private List<Color> m_protectiveLayersColors;
-
-    private const int k_numberOfLayers = 5;
 
     public delegate void UpdateLayerValue(int layerIndex);
     public event UpdateLayerValue OnLayerValueChange;
@@ -24,7 +24,7 @@ public class ProtectiveLayers : MonoBehaviour
 
     private void InitLayers()
     {
-        for (int i = 0; i < k_numberOfLayers; i++)
+        for (int i = 0; i < numberOfLayers; i++)
         {
             m_protectiveLayers.Add(0f);
         }
@@ -38,7 +38,7 @@ public class ProtectiveLayers : MonoBehaviour
         Color magenta = new Color(1f, 0f, 1f, 0.5f);
         Color green = new Color(0f, 1f, 0f, 0.5f);
 
-        m_protectiveLayersColors = new List<Color>(k_numberOfLayers);
+        m_protectiveLayersColors = new List<Color>(numberOfLayers);
         m_protectiveLayersColors.Add(red);
         m_protectiveLayersColors.Add(yellow);
         m_protectiveLayersColors.Add(cyan);

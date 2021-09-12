@@ -22,7 +22,7 @@ public class ProtectiveLayersCanvas : MonoBehaviour
     {
         List<Color> possibleColors = m_protectiveLayers.GetProtectiveLayersColors();
 
-        for (int i = 0; i < possibleColors.Count; i++)
+        for (int i = 0; i < ProtectiveLayers.numberOfLayers; i++)
         {
             Slider slider = m_layersSliders[i];
 

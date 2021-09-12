@@ -1874,6 +1874,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_bullet: {fileID: 2101589698328990087, guid: c7c157c17ce80417284055d1032f0bff, type: 3}
   m_shootPoint: {fileID: 627227195}
+  m_ammunitions: 5
 --- !u!114 &1468148931
 MonoBehaviour:
   m_ObjectHideFlags: 0
