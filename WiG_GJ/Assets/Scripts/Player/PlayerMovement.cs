@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private CharacterController m_playerController;
-
+    [SerializeField] private ProtectiveLayers m_protectiveLayers;
     [SerializeField] private LayerMask m_groundLayer;
 
     private Vector3 k_crouchScale = new Vector3(1f, 0.75f, 1f);
@@ -26,27 +27,48 @@ public class PlayerMovement : MonoBehaviour
 
     // =================================
 
+    private void Start()
+    {
+        m_playerController = GetComponent<CharacterController>();
+        m_protectiveLayers = GetComponent<ProtectiveLayers>();
+    }
+
     private void Update()
     {
-        GetInputs();
-
-        // TODO : define a crouch button ?
-        // TODO : See if we keep the feature
-        if (Input.GetKey(KeyCode.C))
+        if (m_protectiveLayers.IsAlive)
         {
-            transform.localScale = k_crouchScale;
+            GetInputs();
+
+            // TODO : define a crouch button ?
+            // TODO : See if we keep the feature
+            if (Input.GetKey(KeyCode.C))
+            {
+                transform.localScale = k_crouchScale;
+            }
+            else
+            {
+                transform.localScale = Vector3.one;
+            }
         }
         else
         {
-            transform.localScale = Vector3.one;
+            // Restart
+            // TODO : Move this in a GameManager ?
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
         }
     }
 
     private void FixedUpdate()
     {
-        m_isGrounded = Physics.CheckSphere(transform.position, m_checkGroundRadius, m_groundLayer, QueryTriggerInteraction.Ignore);
+        if (m_protectiveLayers.IsAlive)
+        {
+            m_isGrounded = Physics.CheckSphere(transform.position, m_checkGroundRadius, m_groundLayer, QueryTriggerInteraction.Ignore);
 
-        MovePlayer();
+            MovePlayer();
+        }
     }
 
     private void GetInputs()

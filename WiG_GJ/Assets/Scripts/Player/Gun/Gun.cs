@@ -31,6 +31,18 @@ public class Gun : MonoBehaviour
         }
     }
 
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.CompareTag("Ammunition"))
+        {
+            Debug.Log("Player collected ammo !");
+
+            AddAmmunition();
+
+            Destroy(hit.gameObject);
+        }
+    }
+
     public void AddAmmunition()
     {
         if (m_ammunitions < k_maxAmmunitions)

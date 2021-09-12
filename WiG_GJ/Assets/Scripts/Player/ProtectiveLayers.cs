@@ -11,6 +11,15 @@ public class ProtectiveLayers : MonoBehaviour
 
     [SerializeField] private List<Color> m_protectiveLayersColors;
 
+    private bool m_isAlive = true;
+    public bool IsAlive
+    {
+        get { return m_isAlive; }
+    }
+
+    private float m_hitCooldown = 2f;
+    private float m_lastHitTime = 0f;
+
     public delegate void UpdateLayerValue(int layerIndex);
     public event UpdateLayerValue OnLayerValueChange;
 
@@ -20,6 +29,54 @@ public class ProtectiveLayers : MonoBehaviour
     {
         InitLayers();
         InitColors();
+    }
+
+    private void Update()
+    {
+        m_lastHitTime += Time.deltaTime;
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        float effectValue = 5f;
+
+        if (m_lastHitTime > m_hitCooldown)
+        {
+            if (hit.gameObject.CompareTag("Obstacle"))
+            {
+                Debug.Log("Player bumped into obstacle !");
+
+                int randomLayerIndex = Random.Range(0, numberOfLayers);
+
+                ReduceLayers(effectValue, randomLayerIndex);
+
+                m_lastHitTime = 0f;
+            }
+            else if (hit.gameObject.CompareTag("Enemy"))
+            {
+                GameObject enemyGameObject = hit.transform.root.gameObject;
+                Enemy enemy = enemyGameObject.GetComponent<Enemy>();
+                int currentColorIndex = enemy.GetCurrentColorIndex();
+
+                if (enemy.IsTrappedInBubble)
+                {
+                    Debug.Log("Player popped the bubble trap !");
+
+                    Destroy(enemyGameObject);
+
+                    AddToLayers(effectValue, currentColorIndex);
+                }
+                else
+                {
+                    Debug.Log("Player bumped into an enemy !");
+
+                    ReduceLayers(effectValue, currentColorIndex);
+                }
+
+                m_lastHitTime = 0f;
+            }
+        }
+
     }
 
     private void InitLayers()
@@ -130,6 +187,7 @@ public class ProtectiveLayers : MonoBehaviour
             Debug.Log("Player lost !");
 
             // TODO : Restart menu (or automatic restart ?)
+            m_isAlive = false;
         }
     }
 }

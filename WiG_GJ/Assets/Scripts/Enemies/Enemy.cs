@@ -4,9 +4,14 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private BubbleTrap m_bubbleTrap;
 
-    [SerializeField] private float m_effectValue = 5f;
+    // TODO : Rediscuss the management of the layers
+    private float m_effectValue = 5f;
 
     private bool m_isTrappedInBubble = false;
+    public bool IsTrappedInBubble
+    {
+        get { return m_isTrappedInBubble; }
+    }
 
     // =================================
 
@@ -16,39 +21,19 @@ public class Enemy : MonoBehaviour
         m_bubbleTrap.gameObject.SetActive(false);
     }
 
+    public int GetCurrentColorIndex()
+    {
+        return m_bubbleTrap.CurrentColorIndex;
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (m_isTrappedInBubble)
+        if (!m_isTrappedInBubble && collision.gameObject.GetComponent<Bullet>())
         {
-            if (collision.gameObject.CompareTag("Player"))
-            {
-                Debug.Log("Player popped the bubble trap !");
+            m_isTrappedInBubble = true;
 
-                ProtectiveLayers protectiveLayers = collision.transform.parent.GetComponent<ProtectiveLayers>();
-
-                protectiveLayers.AddToLayers(m_effectValue, m_bubbleTrap.CurrentColorIndex);
-
-                Destroy(gameObject);
-            }
-        }
-        else
-        {
-            if (collision.gameObject.GetComponent<Bullet>())
-            {
-                m_isTrappedInBubble = true;
-
-                // TODO : make the enemy float ?
-                m_bubbleTrap.gameObject.SetActive(true);
-
-            }
-            else if (collision.gameObject.CompareTag("Player"))
-            {
-                Debug.Log("Player bumped into an enemy !");
-
-                ProtectiveLayers protectiveLayers = collision.transform.parent.GetComponent<ProtectiveLayers>();
-
-                protectiveLayers.ReduceLayers(m_effectValue, m_bubbleTrap.CurrentColorIndex);
-            }
+            // TODO : make the enemy float ?
+            m_bubbleTrap.gameObject.SetActive(true);
         }
     }
 }
