@@ -5,9 +5,6 @@ public class Bullet : MonoBehaviour
     public Vector3 hitPoint;
     
     private float m_speed = 100f;
-    private float m_damage = 10f;
-
-    [SerializeField] private bool m_reachedHitPoint = false;
 
     // =================================
 
@@ -18,15 +15,13 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Bullet collided with " + collision.gameObject.name);
-
         // TODO : manage sounds differently considering what the bullet hit
 
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.CompareTag("Enemy"))
         {
             Destroy(gameObject);
         }
-        else if (collision.gameObject.tag == "Obstacle" || collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        else if (collision.gameObject.CompareTag("Obstacle") || collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             Destroy(gameObject);
         }
