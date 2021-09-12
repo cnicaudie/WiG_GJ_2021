@@ -25,15 +25,17 @@ public class ProtectiveLayersCanvas : MonoBehaviour
         for (int i = 0; i < possibleColors.Count; i++)
         {
             Slider slider = m_layersSliders[i];
+
             Image fillImage = slider.GetComponentsInChildren<Image>()[1];
             fillImage.color = possibleColors[i];
-            slider.value = 0f;
+
             slider.maxValue = ProtectiveLayers.layerMaxValue;
+            slider.value = m_protectiveLayers.GetLayerValue(i);
         }
     }
 
-    public void UpdateSliderProgress(int sliderIndex, float newValue)
+    public void UpdateSliderProgress(int layerIndex)
     {
-        m_layersSliders[sliderIndex].value = newValue;
+        m_layersSliders[layerIndex].value = m_protectiveLayers.GetLayerValue(layerIndex);
     }
 }

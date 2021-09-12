@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        m_bubbleTrap.DefineRandomColor();
         m_bubbleTrap.gameObject.SetActive(false);
     }
 
@@ -38,7 +39,6 @@ public class Enemy : MonoBehaviour
 
                 // TODO : make the enemy float ?
                 m_bubbleTrap.gameObject.SetActive(true);
-                m_bubbleTrap.DefineRandomColor();
 
             }
             else if (collision.gameObject.CompareTag("Player"))

@@ -11,7 +11,7 @@ public class ProtectiveLayers : MonoBehaviour
 
     private const int k_numberOfLayers = 5;
 
-    public delegate void UpdateLayerValue(int layerIndex, float newValue);
+    public delegate void UpdateLayerValue(int layerIndex);
     public event UpdateLayerValue OnLayerValueChange;
 
     // =================================
@@ -53,7 +53,7 @@ public class ProtectiveLayers : MonoBehaviour
 
         if (OnLayerValueChange != null)
         {
-            OnLayerValueChange(layerIndex, m_protectiveLayers[layerIndex]);
+            OnLayerValueChange(layerIndex);
         }
     }
 
@@ -64,13 +64,18 @@ public class ProtectiveLayers : MonoBehaviour
 
         if (OnLayerValueChange != null)
         {
-            OnLayerValueChange(layerIndex, m_protectiveLayers[layerIndex]);
+            OnLayerValueChange(layerIndex);
         }
     }
 
     public List<Color> GetProtectiveLayersColors()
     {
         return m_protectiveLayersColors;
+    }
+
+    public float GetLayerValue(int layerIndex)
+    {
+        return m_protectiveLayers[layerIndex];
     }
 
     public List<int> GetNotFilledLayers()
