@@ -9,12 +9,20 @@ public class GroundTile : MonoBehaviour
     [SerializeField] private List<GameObject> m_obstacles;
     [SerializeField] private List<Transform> m_obstacleSpawnPoints;
 
+    [SerializeField] private Transform m_parentCollectible;
+    [SerializeField] private List<GameObject> m_collectibles;
+    [SerializeField] private List<Transform> m_collectibleSpawnPoints;
+
     // =================================
 
     private void Start()
     {
         m_groundSpawner = FindObjectOfType<GroundSpawner>();
-        SpawnObstacles();
+
+        int obstacleNumber = Random.Range(1, 4);
+        int collectibleNumber = Random.Range(0, 3);
+        SpawnObjects(obstacleNumber, m_obstacleSpawnPoints, m_obstacles, m_parentObstacle);
+        SpawnObjects(collectibleNumber, m_collectibleSpawnPoints, m_collectibles, m_parentCollectible);
     }
 
     private void OnTriggerExit(Collider other)
@@ -26,20 +34,21 @@ public class GroundTile : MonoBehaviour
         }
     }
 
-    private void SpawnObstacles()
+    private void SpawnObjects(int objectNumber, List<Transform> spawnPoints, List<GameObject> objectTypes, Transform parentObject)
     {
-        int obstacleNumber = Random.Range(1, 4);
-
-        for (int i = 0; i < obstacleNumber; i++)
+        for (int i = 0; i < objectNumber; i++)
         {
-            int spawnIndex = Random.Range(0, m_obstacleSpawnPoints.Count);
-            int obstacleTypeIndex = Random.Range(0, m_obstacles.Count);
-            
-            Transform spawnPoint = m_obstacleSpawnPoints[spawnIndex];
+            int spawnIndex = Random.Range(0, spawnPoints.Count);
 
-            GameObject obstacle = m_obstacles[obstacleTypeIndex];
+            int objectTypeIndex = Random.Range(0, objectTypes.Count);
 
-            Instantiate(obstacle, spawnPoint.position, Quaternion.identity, m_parentObstacle);
-        } 
+            Transform spawnPoint = spawnPoints[spawnIndex];
+
+            spawnPoints.Remove(spawnPoint);
+
+            GameObject gameObject = objectTypes[objectTypeIndex];
+
+            Instantiate(gameObject, spawnPoint.position, Quaternion.identity, parentObject);
+        }
     }
 }

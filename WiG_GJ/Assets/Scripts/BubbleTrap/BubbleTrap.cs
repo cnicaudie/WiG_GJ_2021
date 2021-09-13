@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class BubbleTrap : MonoBehaviour
 {
-    [SerializeField] private ProtectiveLayers m_protectiveLayers;
-
     private int m_currentColorIndex;
     public int CurrentColorIndex
     {
@@ -15,11 +13,13 @@ public class BubbleTrap : MonoBehaviour
 
     public void DefineRandomColor()
     {
+        ProtectiveLayers protectiveLayers = FindObjectOfType<ProtectiveLayers>();
+
+        List<Color> possibleColors = protectiveLayers.GetProtectiveLayersColors();
+
+        m_currentColorIndex = protectiveLayers.GetRandomLayerIndex(false);
+
         MeshRenderer bubbleMeshRenderer = gameObject.GetComponent<MeshRenderer>();
-
-        List<Color> possibleColors = m_protectiveLayers.GetProtectiveLayersColors();
-
-        m_currentColorIndex = m_protectiveLayers.GetRandomLayerIndex(false);
 
         bubbleMeshRenderer.material.color = possibleColors[m_currentColorIndex];
     }
