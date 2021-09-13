@@ -80,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (!m_isBumped && (hit.gameObject.CompareTag("Obstacle")
-            || (hit.gameObject.CompareTag("Enemy") && !hit.transform.root.GetComponent<Enemy>().IsTrappedInBubble)))
+            || (hit.gameObject.CompareTag("Enemy") && !hit.transform.parent.GetComponent<Enemy>().IsTrappedInBubble)))
         {
             m_bumpDirection = new Vector3(-hit.moveDirection.x, 0, -hit.moveDirection.z);
             m_isBumped = true;

@@ -43,6 +43,25 @@ public class ProtectiveLayers : MonoBehaviour
 
         //Debug.Log("[" + m_lastHitTime + "]" +"BUMPED ONTO " + hit.gameObject.name + " WITH TAG " + hit.gameObject.tag);
 
+        // Add cases
+        if (hit.gameObject.CompareTag("Enemy"))
+        {
+            GameObject enemyGameObject = hit.transform.parent.gameObject;
+            Enemy enemy = enemyGameObject.GetComponent<Enemy>();
+
+            if (enemy.IsTrappedInBubble)
+            {
+                Debug.Log("Player popped the bubble trap !");
+
+                int currentColorIndex = enemy.GetCurrentColorIndex();
+
+                AddToLayers(effectValue, currentColorIndex);
+
+                Destroy(enemyGameObject);
+            }
+        }
+
+        // Reduce cases
         if (m_lastHitTime > m_hitCooldown)
         {
             if (hit.gameObject.CompareTag("Obstacle"))
@@ -57,20 +76,10 @@ public class ProtectiveLayers : MonoBehaviour
             }
             else if (hit.gameObject.CompareTag("Enemy"))
             {
-                GameObject enemyGameObject = hit.transform.root.gameObject;
+                GameObject enemyGameObject = hit.transform.parent.gameObject;
                 Enemy enemy = enemyGameObject.GetComponent<Enemy>();
 
-                if (enemy.IsTrappedInBubble)
-                {
-                    Debug.Log("Player popped the bubble trap !");
-
-                    int currentColorIndex = enemy.GetCurrentColorIndex();
-
-                    AddToLayers(effectValue, currentColorIndex);
-
-                    Destroy(enemyGameObject);
-                }
-                else
+                if (!enemy.IsTrappedInBubble)
                 {
                     Debug.Log("Player bumped into an enemy !");
 
@@ -82,7 +91,6 @@ public class ProtectiveLayers : MonoBehaviour
                 }
             }
         }
-
     }
 
     private void InitLayers()
