@@ -129,8 +129,6 @@ public class ProtectiveLayers : MonoBehaviour
 
         m_protectiveLayers[layerIndex] -= amount;
 
-        CheckIfLayersAllEmpty();
-
         if (OnLayerValueChange != null)
         {
             OnLayerValueChange(layerIndex);
@@ -218,24 +216,6 @@ public class ProtectiveLayers : MonoBehaviour
             Debug.Log("Player won !");
 
             // TODO : End menu ?
-        }
-    }
-
-    private void CheckIfLayersAllEmpty()
-    {
-        bool allLayersEmpty = true;
-
-        foreach (float layer in m_protectiveLayers)
-        {
-            if (layer > 0f)
-            {
-                allLayersEmpty = false;
-            }
-        }
-
-        if (allLayersEmpty)
-        {
-            Die();
         }
     }
 
