@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private CharacterController m_playerController;
-
+    [SerializeField] private ProtectiveLayers m_protectiveLayers;
     [SerializeField] private LayerMask m_groundLayer;
 
     private Vector3 k_crouchScale = new Vector3(1f, 0.75f, 1f);
@@ -24,29 +25,67 @@ public class PlayerMovement : MonoBehaviour
     private float m_jumpTimer;
     private const float k_maxJumpTime = 0.1f;
 
+    private bool m_isBumped;
+    private Vector3 m_bumpDirection;
+    private float m_bumpForce = 80f;
+    private float m_bumpTimer;
+    private const float k_maxBumpTime = 0.15f;
+
     // =================================
+
+    private void Start()
+    {
+        m_playerController = GetComponent<CharacterController>();
+        m_protectiveLayers = GetComponent<ProtectiveLayers>();
+    }
 
     private void Update()
     {
-        GetInputs();
-
-        // TODO : define a crouch button ?
-        // TODO : See if we keep the feature
-        if (Input.GetKey(KeyCode.C))
+        if (m_protectiveLayers.IsAlive)
         {
-            transform.localScale = k_crouchScale;
+            GetInputs();
+
+            // TODO : define a crouch button ?
+            // TODO : See if we keep the feature
+            if (Input.GetKey(KeyCode.C))
+            {
+                transform.localScale = k_crouchScale;
+            }
+            else
+            {
+                transform.localScale = Vector3.one;
+            }
         }
         else
         {
-            transform.localScale = Vector3.one;
+            // Restart
+            // TODO : Move this in a GameManager ?
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
         }
     }
 
     private void FixedUpdate()
     {
-        m_isGrounded = Physics.CheckSphere(transform.position, m_checkGroundRadius, m_groundLayer, QueryTriggerInteraction.Ignore);
+        if (m_protectiveLayers.IsAlive)
+        {
+            m_isGrounded = Physics.CheckSphere(transform.position, m_checkGroundRadius, m_groundLayer, QueryTriggerInteraction.Ignore);
 
-        MovePlayer();
+            MovePlayer();
+        }
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (!m_isBumped && (hit.gameObject.CompareTag("Obstacle")
+            || (hit.gameObject.CompareTag("Enemy") && !hit.transform.parent.GetComponent<Enemy>().IsTrappedInBubble)))
+        {
+            m_bumpDirection = new Vector3(-hit.moveDirection.x, 0, -hit.moveDirection.z);
+            m_isBumped = true;
+            m_bumpTimer = k_maxBumpTime;
+        }
     }
 
     private void GetInputs()
@@ -56,7 +95,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
-        Vector3 moveDirection = new Vector3(m_horizontalInput, 0f, 1f).normalized;
+        float verticalMove = m_isBumped ? 0f : 1f;
+        Vector3 moveDirection = new Vector3(m_horizontalInput, 0f, verticalMove).normalized;
 
         // Vertical movement (jump and gravity)
         if (m_isGrounded)
@@ -92,7 +132,17 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        if (m_bumpTimer > 0f)
+        {
+            m_bumpTimer -= Time.fixedDeltaTime;
+        }
+        else
+        {
+            m_bumpDirection = Vector3.zero;
+            m_isBumped = false;
+        }
+
         // Apply motion
-        m_playerController.Move((moveDirection * m_speed + m_velocity) * Time.fixedDeltaTime);
+        m_playerController.Move((moveDirection * m_speed + m_velocity + m_bumpDirection * m_bumpForce) * Time.fixedDeltaTime);
     }
 }
