@@ -16,11 +16,11 @@ public class BubbleTrap : MonoBehaviour
     public void DefineRandomColor()
     {
         MeshRenderer bubbleMeshRenderer = gameObject.GetComponent<MeshRenderer>();
-        List<Color> possibleColors = m_protectiveLayers.GetProtectiveLayersColors();
-        List<int> notFilledLayerIndexes = m_protectiveLayers.GetNotFilledLayers();
-        int tempIndex = Random.Range(0, notFilledLayerIndexes.Count);
 
-        m_currentColorIndex = notFilledLayerIndexes[tempIndex];
+        List<Color> possibleColors = m_protectiveLayers.GetProtectiveLayersColors();
+
+        m_currentColorIndex = m_protectiveLayers.GetRandomLayerIndex(false);
+
         bubbleMeshRenderer.material.color = possibleColors[m_currentColorIndex];
     }
 }

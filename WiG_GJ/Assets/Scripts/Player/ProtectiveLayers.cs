@@ -38,6 +38,7 @@ public class ProtectiveLayers : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        // TODO : Differientiate the effect value between obstacle/enemy
         float effectValue = 5f;
 
         if (m_lastHitTime > m_hitCooldown)
@@ -46,7 +47,7 @@ public class ProtectiveLayers : MonoBehaviour
             {
                 Debug.Log("Player bumped into obstacle !");
 
-                int randomLayerIndex = Random.Range(0, numberOfLayers);
+                int randomLayerIndex = GetRandomLayerIndex(true);
 
                 ReduceLayers(effectValue, randomLayerIndex);
 
@@ -56,21 +57,24 @@ public class ProtectiveLayers : MonoBehaviour
             {
                 GameObject enemyGameObject = hit.transform.root.gameObject;
                 Enemy enemy = enemyGameObject.GetComponent<Enemy>();
-                int currentColorIndex = enemy.GetCurrentColorIndex();
 
                 if (enemy.IsTrappedInBubble)
                 {
                     Debug.Log("Player popped the bubble trap !");
 
-                    Destroy(enemyGameObject);
+                    int currentColorIndex = enemy.GetCurrentColorIndex();
 
                     AddToLayers(effectValue, currentColorIndex);
+
+                    Destroy(enemyGameObject);
                 }
                 else
                 {
                     Debug.Log("Player bumped into an enemy !");
 
-                    ReduceLayers(effectValue, currentColorIndex);
+                    int randomLayerIndex = GetRandomLayerIndex(true);
+
+                    ReduceLayers(effectValue, randomLayerIndex);
                 }
 
                 m_lastHitTime = 0f;
@@ -103,7 +107,7 @@ public class ProtectiveLayers : MonoBehaviour
         m_protectiveLayersColors.Add(green);
     }
 
-    public void AddToLayers(float amount, int layerIndex)
+    private void AddToLayers(float amount, int layerIndex)
     {
         m_protectiveLayers[layerIndex] += amount;
         CheckIfLayersAllFilled();
@@ -114,9 +118,17 @@ public class ProtectiveLayers : MonoBehaviour
         }
     }
 
-    public void ReduceLayers(float amount, int layerIndex)
+    private void ReduceLayers(float amount, int layerIndex)
     {
+        if (layerIndex < 0)
+        {
+            Die();
+
+            return;
+        }
+
         m_protectiveLayers[layerIndex] -= amount;
+
         CheckIfLayersAllEmpty();
 
         if (OnLayerValueChange != null)
@@ -135,7 +147,31 @@ public class ProtectiveLayers : MonoBehaviour
         return m_protectiveLayers[layerIndex];
     }
 
-    public List<int> GetNotFilledLayers()
+    public int GetRandomLayerIndex(bool toReduce)
+    {
+        List<int> filteredLayerIndexes;
+
+        if (toReduce)
+        {
+            filteredLayerIndexes = GetNonEmptyLayers();
+
+            // All layers are empty
+            if (filteredLayerIndexes.Count == 0)
+            {
+                return -1;
+            }
+        }
+        else
+        {
+            filteredLayerIndexes = GetNotFilledLayers();
+        }
+
+        int randomIndex = Random.Range(0, filteredLayerIndexes.Count);
+
+        return filteredLayerIndexes[randomIndex];
+    }
+
+    private List<int> GetNotFilledLayers()
     {
         List<int> notFilledLayerIndexes = new List<int>();
 
@@ -148,6 +184,21 @@ public class ProtectiveLayers : MonoBehaviour
         }
 
         return notFilledLayerIndexes;
+    }
+
+    private List<int> GetNonEmptyLayers()
+    {
+        List<int> nonEmptyLayerIndexes = new List<int>();
+
+        for (int i = 0; i < m_protectiveLayers.Count; i++)
+        {
+            if (m_protectiveLayers[i] > 0f)
+            {
+                nonEmptyLayerIndexes.Add(i);
+            }
+        }
+
+        return nonEmptyLayerIndexes;
     }
 
     private void CheckIfLayersAllFilled()
@@ -184,10 +235,15 @@ public class ProtectiveLayers : MonoBehaviour
 
         if (allLayersEmpty)
         {
-            Debug.Log("Player lost !");
-
-            // TODO : Restart menu (or automatic restart ?)
-            m_isAlive = false;
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player lost !");
+
+        // TODO : Restart menu (or automatic restart ?)
+        m_isAlive = false;
     }
 }
