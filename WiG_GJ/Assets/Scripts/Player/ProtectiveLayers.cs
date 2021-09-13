@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ProtectiveLayers : MonoBehaviour
 {
-    public const float layerMaxValue = 100f;
+    public const float layerMaxValue = 5f;
 
     public const int numberOfLayers = 5;
 
@@ -38,12 +38,7 @@ public class ProtectiveLayers : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        // TODO : Differientiate the effect value between obstacle/enemy
-        float effectValue = 5f;
-
-        //Debug.Log("[" + m_lastHitTime + "]" +"BUMPED ONTO " + hit.gameObject.name + " WITH TAG " + hit.gameObject.tag);
-
-        // Add cases
+        // Fill layers cases
         if (hit.gameObject.CompareTag("Enemy"))
         {
             GameObject enemyGameObject = hit.transform.parent.gameObject;
@@ -55,13 +50,13 @@ public class ProtectiveLayers : MonoBehaviour
 
                 int currentColorIndex = enemy.GetCurrentColorIndex();
 
-                AddToLayers(effectValue, currentColorIndex);
+                FillLayer(currentColorIndex);
 
                 Destroy(enemyGameObject);
             }
         }
 
-        // Reduce cases
+        // Reduce layers cases
         if (m_lastHitTime > m_hitCooldown)
         {
             if (hit.gameObject.CompareTag("Obstacle"))
@@ -70,7 +65,7 @@ public class ProtectiveLayers : MonoBehaviour
 
                 int randomLayerIndex = GetRandomLayerIndex(true);
 
-                ReduceLayers(effectValue, randomLayerIndex);
+                ReduceLayer(randomLayerIndex);
 
                 m_lastHitTime = 0f;
             }
@@ -83,9 +78,7 @@ public class ProtectiveLayers : MonoBehaviour
                 {
                     Debug.Log("Player bumped into an enemy !");
 
-                    int randomLayerIndex = GetRandomLayerIndex(true);
-
-                    ReduceLayers(effectValue, randomLayerIndex);
+                    ReduceAllLayers();
 
                     m_lastHitTime = 0f;
                 }
@@ -117,9 +110,10 @@ public class ProtectiveLayers : MonoBehaviour
         m_protectiveLayersColors.Add(green);
     }
 
-    private void AddToLayers(float amount, int layerIndex)
+    private void FillLayer(int layerIndex)
     {
-        m_protectiveLayers[layerIndex] += amount;
+        m_protectiveLayers[layerIndex] = layerMaxValue;
+
         CheckIfLayersAllFilled();
 
         if (OnLayerValueChange != null)
@@ -128,7 +122,7 @@ public class ProtectiveLayers : MonoBehaviour
         }
     }
 
-    private void ReduceLayers(float amount, int layerIndex)
+    private void ReduceLayer(int layerIndex)
     {
         if (layerIndex < 0)
         {
@@ -137,11 +131,31 @@ public class ProtectiveLayers : MonoBehaviour
             return;
         }
 
-        m_protectiveLayers[layerIndex] -= amount;
+        if (m_protectiveLayers[layerIndex] > 0f)
+        {
+            m_protectiveLayers[layerIndex] -= 1f;
+        }
 
         if (OnLayerValueChange != null)
         {
             OnLayerValueChange(layerIndex);
+        }
+    }
+
+    private void ReduceAllLayers()
+    {
+        List<int> layersToReduce = GetNonEmptyLayers();
+
+        if (layersToReduce.Count == 0)
+        {
+            ReduceLayer(-1);
+        }
+        else
+        {
+            for (int i = 0; i < layersToReduce.Count; i++)
+            {
+                ReduceLayer(layersToReduce[i]);
+            }
         }
     }
 
@@ -198,7 +212,7 @@ public class ProtectiveLayers : MonoBehaviour
     {
         List<int> nonEmptyLayerIndexes = new List<int>();
 
-        for (int i = 0; i < m_protectiveLayers.Count; i++)
+        for (int i = 0; i < numberOfLayers; i++)
         {
             if (m_protectiveLayers[i] > 0f)
             {

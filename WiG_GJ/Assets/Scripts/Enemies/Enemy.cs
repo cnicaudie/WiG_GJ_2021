@@ -4,9 +4,6 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private BubbleTrap m_bubbleTrap;
 
-    // TODO : Rediscuss the management of the layers
-    private float m_effectValue = 5f;
-
     private bool m_isTrappedInBubble = false;
     public bool IsTrappedInBubble
     {
