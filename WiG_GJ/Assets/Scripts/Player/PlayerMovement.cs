@@ -41,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (m_protectiveLayers.IsAlive)
+        if (m_protectiveLayers.IsAlive && !m_protectiveLayers.HasFilledAllLayers)
         {
             GetInputs();
 
@@ -69,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (m_protectiveLayers.IsAlive)
+        if (m_protectiveLayers.IsAlive && !m_protectiveLayers.HasFilledAllLayers)
         {
             m_isGrounded = Physics.CheckSphere(transform.position, m_checkGroundRadius, m_groundLayer, QueryTriggerInteraction.Ignore);
 

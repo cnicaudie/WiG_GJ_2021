@@ -17,6 +17,12 @@ public class ProtectiveLayers : MonoBehaviour
         get { return m_isAlive; }
     }
 
+    private bool m_hasFilledAllLayers = false;
+    public bool HasFilledAllLayers
+    {
+        get { return m_hasFilledAllLayers; }
+    }
+
     private float m_hitCooldown = 2f;
     private float m_lastHitTime = 3f;
 
@@ -235,6 +241,9 @@ public class ProtectiveLayers : MonoBehaviour
             }
         }
 
+        m_hasFilledAllLayers = hasFilledAllLayers;
+
+        // TODO : Delete that later
         if (hasFilledAllLayers)
         {
             Debug.Log("Player won !");
