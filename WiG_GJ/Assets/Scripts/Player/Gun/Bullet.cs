@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // TODO : manage sounds differently considering what the bullet hit
+        // TODO : manage sounds differently considering what the bullet hit ?
 
         if (collision.gameObject.CompareTag("Enemy"))
         {
@@ -25,5 +25,7 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        Destroy(gameObject, 2f);
     }
 }
