@@ -18,7 +18,7 @@ public class ProtectiveLayers : MonoBehaviour
     }
 
     private float m_hitCooldown = 2f;
-    private float m_lastHitTime = 0f;
+    private float m_lastHitTime = 3f;
 
     public delegate void UpdateLayerValue(int layerIndex);
     public event UpdateLayerValue OnLayerValueChange;
@@ -40,6 +40,8 @@ public class ProtectiveLayers : MonoBehaviour
     {
         // TODO : Differientiate the effect value between obstacle/enemy
         float effectValue = 5f;
+
+        //Debug.Log("[" + m_lastHitTime + "]" +"BUMPED ONTO " + hit.gameObject.name + " WITH TAG " + hit.gameObject.tag);
 
         if (m_lastHitTime > m_hitCooldown)
         {
@@ -75,9 +77,9 @@ public class ProtectiveLayers : MonoBehaviour
                     int randomLayerIndex = GetRandomLayerIndex(true);
 
                     ReduceLayers(effectValue, randomLayerIndex);
-                }
 
-                m_lastHitTime = 0f;
+                    m_lastHitTime = 0f;
+                }
             }
         }
 

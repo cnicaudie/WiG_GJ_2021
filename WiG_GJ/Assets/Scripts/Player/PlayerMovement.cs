@@ -25,6 +25,12 @@ public class PlayerMovement : MonoBehaviour
     private float m_jumpTimer;
     private const float k_maxJumpTime = 0.1f;
 
+    private bool m_isBumped;
+    private Vector3 m_bumpDirection;
+    private float m_bumpForce = 80f;
+    private float m_bumpTimer;
+    private const float k_maxBumpTime = 0.15f;
+
     // =================================
 
     private void Start()
@@ -71,6 +77,17 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (!m_isBumped && (hit.gameObject.CompareTag("Obstacle")
+            || (hit.gameObject.CompareTag("Enemy") && !hit.transform.root.GetComponent<Enemy>().IsTrappedInBubble)))
+        {
+            m_bumpDirection = new Vector3(-hit.moveDirection.x, 0, -hit.moveDirection.z);
+            m_isBumped = true;
+            m_bumpTimer = k_maxBumpTime;
+        }
+    }
+
     private void GetInputs()
     {
         m_horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -78,7 +95,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
-        Vector3 moveDirection = new Vector3(m_horizontalInput, 0f, 1f).normalized;
+        float verticalMove = m_isBumped ? 0f : 1f;
+        Vector3 moveDirection = new Vector3(m_horizontalInput, 0f, verticalMove).normalized;
 
         // Vertical movement (jump and gravity)
         if (m_isGrounded)
@@ -114,7 +132,17 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        if (m_bumpTimer > 0f)
+        {
+            m_bumpTimer -= Time.fixedDeltaTime;
+        }
+        else
+        {
+            m_bumpDirection = Vector3.zero;
+            m_isBumped = false;
+        }
+
         // Apply motion
-        m_playerController.Move((moveDirection * m_speed + m_velocity) * Time.fixedDeltaTime);
+        m_playerController.Move((moveDirection * m_speed + m_velocity + m_bumpDirection * m_bumpForce) * Time.fixedDeltaTime);
     }
 }
