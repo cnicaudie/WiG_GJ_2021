@@ -20,12 +20,16 @@ public class UIManager : MonoBehaviour
 
     private void InitUI()
     {
+        SoundManager.PlayBackground("game");
+
         m_protectiveLayersCanvas.SetActive(true);
         m_gameOverMenuCanvas.SetActive(false);
     }
 
     private void GameOver()
     {
+        SoundManager.PlayBackground("menu");
+
         m_gameOverMenuCanvas.SetActive(true);
         m_protectiveLayersCanvas.SetActive(false);
     }

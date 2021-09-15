@@ -105,6 +105,8 @@ public class PlayerMovement : MonoBehaviour
 
             if (Input.GetButtonDown("Jump"))
             {
+                SoundManager.PlaySound("jump");
+
                 m_isJumping = true;
                 m_jumpTimer = k_maxJumpTime;
                 m_velocity.y += m_jumpForce;
