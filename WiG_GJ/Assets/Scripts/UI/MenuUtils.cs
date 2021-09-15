@@ -10,6 +10,8 @@ public class MenuUtils : MonoBehaviour
 
     public void RestartGame()
     {
+        SoundManager.PlayBackground("game");
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 

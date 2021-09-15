@@ -70,6 +70,8 @@ public class ProtectiveLayers : MonoBehaviour
         {
             if (hit.gameObject.CompareTag("Obstacle"))
             {
+                SoundManager.PlaySound("bumpInObstacle");
+
                 Debug.Log("Player bumped into obstacle !");
 
                 int randomLayerIndex = GetRandomLayerIndex(true);
@@ -80,6 +82,8 @@ public class ProtectiveLayers : MonoBehaviour
             }
             else if (hit.gameObject.CompareTag("Enemy"))
             {
+                SoundManager.PlaySound("bumpInObstacle");
+
                 GameObject enemyGameObject = hit.transform.parent.gameObject;
                 Enemy enemy = enemyGameObject.GetComponent<Enemy>();
 
@@ -121,6 +125,8 @@ public class ProtectiveLayers : MonoBehaviour
 
     private void FillLayer(int layerIndex)
     {
+        SoundManager.PlaySound("fullLayerWin");
+
         m_protectiveLayers[layerIndex] = layerMaxValue;
 
         CheckIfLayersAllFilled();
@@ -257,6 +263,8 @@ public class ProtectiveLayers : MonoBehaviour
 
     private void Die()
     {
+        SoundManager.PlaySound("die");
+
         Debug.Log("Player lost !");
 
         m_isAlive = false;

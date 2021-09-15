@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
+    [SerializeField] private ProtectiveLayers m_protectiveLayers;
+
     [SerializeField] private GameObject m_bullet;
 
     [SerializeField] private Transform m_shootPoint;
@@ -16,17 +18,25 @@ public class Gun : MonoBehaviour
 
     // =================================
 
+    private void Start()
+    {
+        m_protectiveLayers = GetComponent<ProtectiveLayers>();
+    }
+
     void Update()
     {
-        m_cooldownSpeed += Time.deltaTime;
-
-        if (Input.GetButton("Fire1"))
+        if (m_protectiveLayers.IsAlive)
         {
-            if (m_ammunitions > 0 && m_cooldownSpeed > m_shootRate)
+            m_cooldownSpeed += Time.deltaTime;
+
+            if (Input.GetButton("Fire1"))
             {
-                m_cooldownSpeed = 0f;
-                m_ammunitions -= 1;
-                Shoot();
+                if (m_ammunitions > 0 && m_cooldownSpeed > m_shootRate)
+                {
+                    m_cooldownSpeed = 0f;
+                    m_ammunitions -= 1;
+                    Shoot();
+                }
             }
         }
     }
@@ -35,6 +45,8 @@ public class Gun : MonoBehaviour
     {
         if (hit.gameObject.CompareTag("Ammunition"))
         {
+            SoundManager.PlaySound("pickUpAmmo");
+
             Debug.Log("Player collected ammo !");
 
             AddAmmunition();
@@ -59,6 +71,8 @@ public class Gun : MonoBehaviour
 
     private void Shoot()
     {
+        SoundManager.PlaySound("bubbleFire");
+
         Vector3 hitPoint = m_shootPoint.position + m_shootPoint.forward * m_range;
         InstantiateBullet(hitPoint);
     }
