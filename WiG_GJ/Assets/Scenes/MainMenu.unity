@@ -296,13 +296,13 @@ MonoBehaviour:
   m_Text: "Your bubble gun fires 5 different kind of bubbles, each with a distinct
     colour\nTrap the creatures with your bubble gun\nOnce a creature is trapped,
     kill it by running into it to make the bubble explode\nEach kill will give you
-    one bonus to fill entirely one of your layer shield. The bubble colour the creature
-    is trapped on determine the layer where the bonus goes to, assuming the layer
-    is not already completely filled)\nYou win once all layers are completely filled\nYou
-    lose one random bonus when you bump into an obstacle \nYou lose one bonus in
-    each layer when you run into an enemy untrapped\nIf your layers are completely
-    empty, one bump into an obstacle or creature and this is game over\n\nControls\n\nMove
-    left/right : arrow keys \nJump : space key\nShoot : left mouse button"
+    one bonus to one of your layer shield. The bubble colour the creature is trapped
+    on determine the layer where the bonus goes to, assuming the layer is not already
+    completely filled)\nYou win once all layers are completely filled\nYou lose one
+    random bonus when you bump into an obstacle \nYou lose one bonus in each layer
+    when you run into an enemy untrapped\nIf your layers are completely empty, one
+    bump into an obstacle or creature and this is game over\n\nControls\n\nMove left/right
+    : arrow keys \nJump : space key\nShoot : left mouse button"
 --- !u!222 &561073497
 CanvasRenderer:
   m_ObjectHideFlags: 0

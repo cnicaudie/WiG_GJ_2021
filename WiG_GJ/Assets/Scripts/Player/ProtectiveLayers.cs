@@ -59,7 +59,7 @@ public class ProtectiveLayers : MonoBehaviour
 
                 int currentColorIndex = enemy.GetCurrentColorIndex();
 
-                FillLayer(currentColorIndex);
+                AddToLayer(currentColorIndex);
 
                 Destroy(enemyGameObject);
             }
@@ -123,11 +123,14 @@ public class ProtectiveLayers : MonoBehaviour
         m_protectiveLayersColors.Add(green);
     }
 
-    private void FillLayer(int layerIndex)
+    private void AddToLayer(int layerIndex)
     {
         SoundManager.PlaySound("fullLayerWin");
 
-        m_protectiveLayers[layerIndex] = layerMaxValue;
+        if (m_protectiveLayers[layerIndex] < layerMaxValue)
+        {
+            m_protectiveLayers[layerIndex] += 1f;
+        }
 
         CheckIfLayersAllFilled();
 
