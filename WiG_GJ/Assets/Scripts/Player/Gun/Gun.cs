@@ -28,7 +28,7 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
-        if (m_protectiveLayers.IsAlive)
+        if (m_protectiveLayers.IsAlive && !m_protectiveLayers.HasFilledAllLayers)
         {
             m_cooldownSpeed += Time.deltaTime;
 

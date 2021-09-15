@@ -35,6 +35,9 @@ public class ProtectiveLayers : MonoBehaviour
     public delegate void ChangeMenu();
     public event ChangeMenu OnPlayerDeath;
 
+    public delegate void ChangeMenu2();
+    public event ChangeMenu2 OnPlayerWin;
+
     // =================================
 
     private void Awake()
@@ -266,12 +269,14 @@ public class ProtectiveLayers : MonoBehaviour
 
         m_hasFilledAllLayers = hasFilledAllLayers;
 
-        // TODO : Delete that later
         if (hasFilledAllLayers)
         {
             Debug.Log("Player won !");
 
-            // TODO : End menu ?
+            if (OnPlayerWin != null)
+            {
+                OnPlayerWin();
+            }
         }
     }
 

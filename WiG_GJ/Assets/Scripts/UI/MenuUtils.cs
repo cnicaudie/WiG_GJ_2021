@@ -15,6 +15,11 @@ public class MenuUtils : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void Menu()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+    }
+
     public void QuitGame()
     {
 #if UNITY_EDITOR
