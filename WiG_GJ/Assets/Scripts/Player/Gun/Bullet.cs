@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // TODO : manage sounds differently considering what the bullet hit ?
+        SoundManager.PlaySound("bubbleHit");
 
         if (collision.gameObject.CompareTag("Enemy"))
         {

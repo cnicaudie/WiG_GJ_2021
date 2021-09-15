@@ -17,11 +17,26 @@ public class ProtectiveLayers : MonoBehaviour
         get { return m_isAlive; }
     }
 
+    private bool m_hasFilledAllLayers = false;
+    public bool HasFilledAllLayers
+    {
+        get { return m_hasFilledAllLayers; }
+    }
+
     private float m_hitCooldown = 2f;
     private float m_lastHitTime = 3f;
 
     public delegate void UpdateLayerValue(int layerIndex);
     public event UpdateLayerValue OnLayerValueChange;
+
+    public delegate void AddEffect();
+    public event AddEffect OnLayerFilled;
+
+    public delegate void ChangeMenu();
+    public event ChangeMenu OnPlayerDeath;
+
+    public delegate void ChangeMenu2();
+    public event ChangeMenu2 OnPlayerWin;
 
     // =================================
 
@@ -50,7 +65,7 @@ public class ProtectiveLayers : MonoBehaviour
 
                 int currentColorIndex = enemy.GetCurrentColorIndex();
 
-                FillLayer(currentColorIndex);
+                AddToLayer(currentColorIndex);
 
                 Destroy(enemyGameObject);
             }
@@ -61,6 +76,8 @@ public class ProtectiveLayers : MonoBehaviour
         {
             if (hit.gameObject.CompareTag("Obstacle"))
             {
+                SoundManager.PlaySound("bumpInObstacle");
+
                 Debug.Log("Player bumped into obstacle !");
 
                 int randomLayerIndex = GetRandomLayerIndex(true);
@@ -71,6 +88,8 @@ public class ProtectiveLayers : MonoBehaviour
             }
             else if (hit.gameObject.CompareTag("Enemy"))
             {
+                SoundManager.PlaySound("bumpInObstacle");
+
                 GameObject enemyGameObject = hit.transform.parent.gameObject;
                 Enemy enemy = enemyGameObject.GetComponent<Enemy>();
 
@@ -110,9 +129,22 @@ public class ProtectiveLayers : MonoBehaviour
         m_protectiveLayersColors.Add(green);
     }
 
-    private void FillLayer(int layerIndex)
+    private void AddToLayer(int layerIndex)
     {
-        m_protectiveLayers[layerIndex] = layerMaxValue;
+        SoundManager.PlaySound("fullLayerWin");
+
+        if (m_protectiveLayers[layerIndex] < layerMaxValue)
+        {
+            m_protectiveLayers[layerIndex] += 1f;
+        }
+
+        if (m_protectiveLayers[layerIndex] == layerMaxValue)
+        {
+            if (OnLayerFilled != null)
+            {
+                OnLayerFilled();
+            }
+        }
 
         CheckIfLayersAllFilled();
 
@@ -235,19 +267,30 @@ public class ProtectiveLayers : MonoBehaviour
             }
         }
 
+        m_hasFilledAllLayers = hasFilledAllLayers;
+
         if (hasFilledAllLayers)
         {
             Debug.Log("Player won !");
 
-            // TODO : End menu ?
+            if (OnPlayerWin != null)
+            {
+                OnPlayerWin();
+            }
         }
     }
 
     private void Die()
     {
+        SoundManager.PlaySound("die");
+
         Debug.Log("Player lost !");
 
-        // TODO : Restart menu (or automatic restart ?)
         m_isAlive = false;
+
+        if (OnPlayerDeath != null)
+        {
+            OnPlayerDeath();
+        }
     }
 }
