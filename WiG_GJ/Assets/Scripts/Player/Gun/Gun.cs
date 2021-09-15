@@ -16,6 +16,9 @@ public class Gun : MonoBehaviour
 
     private float m_range = 100f;
 
+    public delegate void UpdateBulletValue();
+    public event UpdateBulletValue OnBulletNumberChange;
+
     // =================================
 
     private void Start()
@@ -33,8 +36,6 @@ public class Gun : MonoBehaviour
             {
                 if (m_ammunitions > 0 && m_cooldownSpeed > m_shootRate)
                 {
-                    m_cooldownSpeed = 0f;
-                    m_ammunitions -= 1;
                     Shoot();
                 }
             }
@@ -55,11 +56,21 @@ public class Gun : MonoBehaviour
         }
     }
 
+    public int GetAmmunitionCount()
+    {
+        return m_ammunitions;
+    }
+
     public void AddAmmunition()
     {
         if (m_ammunitions < k_maxAmmunitions)
         {
             m_ammunitions += 1;
+
+            if (OnBulletNumberChange != null)
+            {
+                OnBulletNumberChange();
+            }
         }
     }
 
@@ -71,9 +82,17 @@ public class Gun : MonoBehaviour
 
     private void Shoot()
     {
+        m_cooldownSpeed = 0f;
+        m_ammunitions -= 1;
+
         SoundManager.PlaySound("bubbleFire");
 
         Vector3 hitPoint = m_shootPoint.position + m_shootPoint.forward * m_range;
         InstantiateBullet(hitPoint);
+
+        if (OnBulletNumberChange != null)
+        {
+            OnBulletNumberChange();
+        }
     }
 }
