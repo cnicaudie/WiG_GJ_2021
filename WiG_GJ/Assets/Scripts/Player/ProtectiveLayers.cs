@@ -29,6 +29,9 @@ public class ProtectiveLayers : MonoBehaviour
     public delegate void UpdateLayerValue(int layerIndex);
     public event UpdateLayerValue OnLayerValueChange;
 
+    public delegate void AddEffect();
+    public event AddEffect OnLayerFilled;
+
     public delegate void ChangeMenu();
     public event ChangeMenu OnPlayerDeath;
 
@@ -130,6 +133,14 @@ public class ProtectiveLayers : MonoBehaviour
         if (m_protectiveLayers[layerIndex] < layerMaxValue)
         {
             m_protectiveLayers[layerIndex] += 1f;
+        }
+
+        if (m_protectiveLayers[layerIndex] == layerMaxValue)
+        {
+            if (OnLayerFilled != null)
+            {
+                OnLayerFilled();
+            }
         }
 
         CheckIfLayersAllFilled();

@@ -11,7 +11,10 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 m_velocity;
 
-    private float m_speed = 20f;
+    private float m_speed;
+    private const float k_defaultSpeed = 20f;
+    private const float k_maxSpeed = 50f;
+    private const float k_speedIncrease = 5f;
 
     private float m_horizontalInput;
 
@@ -37,6 +40,10 @@ public class PlayerMovement : MonoBehaviour
     {
         m_playerController = GetComponent<CharacterController>();
         m_protectiveLayers = GetComponent<ProtectiveLayers>();
+
+        m_protectiveLayers.OnLayerFilled += IncreaseSpeed;
+
+        m_speed = k_defaultSpeed;
     }
 
     private void Update()
@@ -44,26 +51,6 @@ public class PlayerMovement : MonoBehaviour
         if (m_protectiveLayers.IsAlive && !m_protectiveLayers.HasFilledAllLayers)
         {
             GetInputs();
-
-            // TODO : define a crouch button ?
-            // TODO : See if we keep the feature
-            if (Input.GetKey(KeyCode.C))
-            {
-                transform.localScale = k_crouchScale;
-            }
-            else
-            {
-                transform.localScale = Vector3.one;
-            }
-        }
-        else
-        {
-            // Restart
-            // TODO : Move this in a GameManager ?
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            }
         }
     }
 
@@ -146,5 +133,15 @@ public class PlayerMovement : MonoBehaviour
 
         // Apply motion
         m_playerController.Move((moveDirection * m_speed + m_velocity + m_bumpDirection * m_bumpForce) * Time.fixedDeltaTime);
+    }
+
+    private void IncreaseSpeed()
+    {
+        if (m_speed < k_maxSpeed)
+        {
+            m_speed += k_speedIncrease;
+        }
+
+        Debug.Log("Speed increase ! New speed : " + m_speed);
     }
 }
