@@ -15,11 +15,6 @@ public class MenuUtils : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void ShowRules()
-    {
-        // TODO
-    }
-
     public void QuitGame()
     {
 #if UNITY_EDITOR
