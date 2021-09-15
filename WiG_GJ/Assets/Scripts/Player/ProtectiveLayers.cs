@@ -29,6 +29,9 @@ public class ProtectiveLayers : MonoBehaviour
     public delegate void UpdateLayerValue(int layerIndex);
     public event UpdateLayerValue OnLayerValueChange;
 
+    public delegate void ChangeMenu();
+    public event ChangeMenu OnPlayerDeath;
+
     // =================================
 
     private void Awake()
@@ -256,7 +259,11 @@ public class ProtectiveLayers : MonoBehaviour
     {
         Debug.Log("Player lost !");
 
-        // TODO : Restart menu (or automatic restart ?)
         m_isAlive = false;
+
+        if (OnPlayerDeath != null)
+        {
+            OnPlayerDeath();
+        }
     }
 }
